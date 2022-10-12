@@ -9,6 +9,7 @@ project(
 
 set(CMAKE_CXX_STANDART 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wuninitialized -Wno-unused-result -Wshadow")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG")
 
 add_subdirectory(bin)
 add_subdirectory(lib)

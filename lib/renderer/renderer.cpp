@@ -85,7 +85,7 @@ void Renderer::Export(const char* file_path) const {
         } else {
             std::vector<uint8_t> padding(padding_length);
 
-            for (size_t y = 0; y < info_header_.height; ++y) {
+            for (int32_t y = 0; y < info_header_.height; ++y) {
                 stream.write(reinterpret_cast<const char*>(table_.data() + row_length_ * y), row_length_);
                 stream.write(reinterpret_cast<const char*>(padding.data()), padding_length);
             }

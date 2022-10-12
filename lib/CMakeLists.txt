@@ -1,1 +1,3 @@
-add_library(renderer renderer.cpp renderer.h)
+add_subdirectory(renderer)
+add_subdirectory(simulation)
+add_library(interactor interactor.cpp interactor.h)
