@@ -91,7 +91,7 @@ void Renderer::Export(const char* file_path) const {
             }
         }
     } else {
-        throw std::runtime_error("Could not open or create the file.");
+        throw std::runtime_error("Could not open or create the output file.");
     } 
 }
 

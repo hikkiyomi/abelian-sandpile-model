@@ -6,6 +6,14 @@
 #include <stdexcept>
 #include <vector>
 
+CellData::CellData() {}
+
+CellData::CellData(uint16_t _x, uint16_t _y, uint64_t _grains)
+    : x(_x)
+    , y(_y)
+    , grains(_grains)
+{}
+
 std::vector<std::string> ParseMonoOption(char* arg) {
     std::vector<std::string> result;
     std::string buff;
@@ -100,11 +108,23 @@ void Interactor::ParseConsoleArguments(int argc, char* argv[]) {
 
 void Interactor::ReadInputData() {
     std::ifstream stream(input_path_);
-
+    
     if (stream.is_open()) {
-        // TODO
+        uint16_t input_x;
+        uint16_t input_y;
+        uint64_t input_grains;
+
+        while (stream >> input_x >> input_y >> input_grains) {
+            input_data_.emplace_back(input_x, input_y, input_grains);
+        }
     } else {
         throw std::runtime_error("Cannot read input file.");
+    }
+}
+
+void Interactor::PrintInputData() {
+    for (auto& cell : input_data_) {
+        std::cout << cell.x << "\t" << cell.y << "\t" << cell.grains << std::endl;
     }
 }
 
