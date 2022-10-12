@@ -63,3 +63,9 @@ private:
     uint32_t GetAlignedLength() const;
     void WriteHeaders(std::ofstream& stream) const;
 };
+
+const Color kWhiteColor = Color(255, 255, 255);
+const Color kGreenColor = Color(0, 255, 0);
+const Color kPurpleColor = Color(127, 0, 255);
+const Color kYellowColor = Color(255, 255, 0);
+const Color kBlackColor = Color(0, 0, 0);
