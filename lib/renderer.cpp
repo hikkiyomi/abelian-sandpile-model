@@ -3,6 +3,12 @@
 #include <fstream>
 #include <stdexcept>
 
+const Color kWhiteColor = Color(255, 255, 255);
+const Color kGreenColor = Color(0, 255, 0);
+const Color kPurpleColor = Color(127, 0, 255);
+const Color kYellowColor = Color(255, 255, 0);
+const Color kBlackColor = Color(0, 0, 0);
+
 BMPFileHeader::BMPFileHeader()
     : file_type(0x4D42)
     , file_size(0)
@@ -27,6 +33,18 @@ BMPInfoHeader::BMPInfoHeader(int32_t _width, int32_t _height)
     , colors_important(0)
 {}
 
+Color::Color()
+    : r(0)
+    , g(0)
+    , b(0)
+{}
+
+Color::Color(uint8_t _r, uint8_t _g, uint8_t _b)
+    : r(_r)
+    , g(_g)
+    , b(_b)
+{}
+
 Renderer::Renderer(int32_t _width, int32_t _height) {
     file_header_ = BMPFileHeader();
     info_header_ = BMPInfoHeader(_width, _height);
@@ -46,7 +64,21 @@ uint32_t Renderer::GetAlignedLength() const {
     return row_length_ + GetPadding();
 }
 
-void Renderer::Export(const char* file_path) {
+void Renderer::SetColor(uint16_t x, uint16_t y, const Color& color_mask) {
+    uint32_t b_channel_index = kColorBytes_ * (y * info_header_.width + x);
+    uint32_t g_channel_index = b_channel_index + 1;
+    uint32_t r_channel_index = b_channel_index + 2;
+
+    if (!(0 <= b_channel_index && r_channel_index < table_.size())) {
+        throw std::runtime_error("Segfault: trying to access non-existing cell");
+    }
+
+    table_[b_channel_index] = color_mask.b;
+    table_[g_channel_index] = color_mask.g;
+    table_[r_channel_index] = color_mask.r;
+}
+
+void Renderer::Export(const char* file_path) const {
     std::ofstream stream(file_path, std::ios::binary);
 
     if (stream.is_open()) {
@@ -69,7 +101,7 @@ void Renderer::Export(const char* file_path) {
     } 
 }
 
-void Renderer::WriteHeaders(std::ofstream& stream) {
+void Renderer::WriteHeaders(std::ofstream& stream) const {
     stream.write(reinterpret_cast<const char*>(&file_header_), sizeof(file_header_));
     stream.write(reinterpret_cast<const char*>(&info_header_), sizeof(info_header_));
 }

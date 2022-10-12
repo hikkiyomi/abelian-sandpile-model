@@ -33,6 +33,15 @@ struct BMPInfoHeader {
     BMPInfoHeader(int32_t _width, int32_t _height);
 };
 
+struct Color {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+
+    Color();
+    Color(uint8_t _r, uint8_t _g, uint8_t _b);
+};
+
 class Renderer {
 public:
     BMPFileHeader file_header_;
@@ -42,7 +51,8 @@ public:
 
     Renderer(int32_t _width, int32_t _height);
 
-    void Export(const char* file_path);
+    void SetColor(uint16_t x, uint16_t y, const Color& color_mask);
+    void Export(const char* file_path) const;
 private:
     static const uint8_t kColorBytes_ = 3;
     static const uint8_t kAlignWidth_ = 4;
@@ -51,5 +61,5 @@ private:
 
     uint32_t GetPadding() const;
     uint32_t GetAlignedLength() const;
-    void WriteHeaders(std::ofstream& stream);
+    void WriteHeaders(std::ofstream& stream) const;
 };
