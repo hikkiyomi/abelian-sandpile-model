@@ -15,14 +15,14 @@ struct CellData {
 };
 
 struct InputProperties {
-    uint16_t height_;
-    uint16_t width_;
+    uint16_t height;
+    uint16_t width;
 
-    uint64_t max_iterations_;
-    uint64_t render_frequency_;
+    uint64_t max_iterations;
+    uint64_t render_frequency;
 
-    std::string input_path_;
-    std::string output_path_;
+    std::string input_path;
+    std::string output_path;
 
     InputProperties();
 };
@@ -37,13 +37,13 @@ private:
     uint16_t shift_x;
     uint16_t shift_y;
 
-    bool check_borders(int32_t x, int32_t y) const;
+    bool CheckBorders(int32_t x, int32_t y) const;
     
-    void expand(int32_t& x, int32_t& y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
-    void expand_width_left(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
-    void expand_width_right(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
-    void expand_height_up(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
-    void expand_height_down(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void Expand(int32_t& x, int32_t& y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void ExpandWidthLeft(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void ExpandWidthRight(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void ExpandHeightUp(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void ExpandHeightDown(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
 
     void RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint64_t frame_number) const;
 };

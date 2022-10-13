@@ -10,14 +10,14 @@
 std::vector<std::string> ParseMonoOption(char* arg) {
     std::vector<std::string> result;
     std::string buff;
-    bool equalSignSeen = false;
+    bool equal_sign_seen = false;
     
     for (size_t i = 0; arg[i] != '\0'; ++i) {
-        if (arg[i] == '=' && !equalSignSeen) {
+        if (arg[i] == '=' && !equal_sign_seen) {
             result.emplace_back(buff);
             buff.clear();
 
-            equalSignSeen = true;
+            equal_sign_seen = true;
         } else {
             buff += std::string(1, arg[i]);
         }
@@ -37,7 +37,7 @@ std::vector<std::string> ParseMonoOption(char* arg) {
 uint16_t ToUInt16(const std::string& arg) {
     uint16_t result = 0;
 
-    for (size_t i = 0; arg[i] != '\0'; ++i) {
+    for (size_t i = 0; i < arg.size(); ++i) {
         result = result * 10 + static_cast<uint8_t>(arg[i] - '0');
     }
 
@@ -47,7 +47,7 @@ uint16_t ToUInt16(const std::string& arg) {
 uint64_t ToUInt64(const std::string& arg) {
     uint64_t result = 0;
 
-    for (size_t i = 0; arg[i] != '\0'; ++i) {
+    for (size_t i = 0; i < arg.size(); ++i) {
         result = result * 10 + static_cast<uint8_t>(arg[i] - '0');
     }
 
@@ -70,21 +70,21 @@ void Interactor::ParseConsoleArguments(int argc, char* argv[]) {
             }
 
             if (params[0] == "-l" || params[0] == "--length") {
-                props_.height_ = ToUInt16(params[1]);
+                props_.height = ToUInt16(params[1]);
                 arguments_bitmask |= (1 << 0);
             } else if (params[0] == "-w" || params[0] == "--width") {
-                props_.width_ = ToUInt16(params[1]);
+                props_.width = ToUInt16(params[1]);
                 arguments_bitmask |= (1 << 1);
             } else if (params[0] == "-i" || params[0] == "--input") {
-                props_.input_path_ = params[1];
+                props_.input_path = params[1];
                 arguments_bitmask |= (1 << 2);
             } else if (params[0] == "-o" || params[0] == "--output") {
-                props_.output_path_ = params[1];
+                props_.output_path = params[1];
                 arguments_bitmask |= (1 << 3);
             } else if (params[0] == "-m" || params[0] == "--max-iter") {
-                props_.max_iterations_ = ToUInt64(params[1]);
+                props_.max_iterations = ToUInt64(params[1]);
             } else if (params[0] == "-f" || params[0] == "--freq") {
-                props_.render_frequency_ = ToUInt64(params[1]);
+                props_.render_frequency = ToUInt64(params[1]);
                 arguments_bitmask |= (1 << 4);
             } else {
                 std::runtime_error("Unknown argument " + std::string(params[0]) + ".");
@@ -100,7 +100,7 @@ void Interactor::ParseConsoleArguments(int argc, char* argv[]) {
 }
 
 void Interactor::ReadInputData() {
-    std::ifstream stream(props_.input_path_);
+    std::ifstream stream(props_.input_path);
     
     if (stream.is_open()) {
         uint16_t input_x;
@@ -124,8 +124,8 @@ void Interactor::PrintInputData() {
 Interactor::Interactor(int argc, char* argv[]) 
     : props_()
 {
-    props_.max_iterations_ = 0;
-    props_.render_frequency_ = 0;
+    props_.max_iterations = 0;
+    props_.render_frequency = 0;
 
     std::cout << "Parsing arguments..." << std::endl;
     ParseConsoleArguments(argc, argv);
