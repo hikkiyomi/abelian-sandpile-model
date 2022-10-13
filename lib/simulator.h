@@ -39,11 +39,11 @@ private:
 
     bool check_borders(int32_t x, int32_t y) const;
     
-    void expand(int32_t& x, int32_t& y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
-    void expand_width_left(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
-    void expand_width_right(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
-    void expand_height_up(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
-    void expand_height_down(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
+    void expand(int32_t& x, int32_t& y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void expand_width_left(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void expand_width_right(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void expand_height_up(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
+    void expand_height_down(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
 
     void RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint64_t frame_number) const;
 };

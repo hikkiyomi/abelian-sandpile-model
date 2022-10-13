@@ -20,7 +20,7 @@ void Simulator::expand(
     int32_t& x,
     int32_t& y,
     std::deque<std::deque<uint64_t>>& table,
-    std::deque<std::deque<bool>>& visited
+    std::deque<std::deque<uint64_t>>& visited
 ) {
     if (!(0 <= x && x < props_.width_)) {
         if (x < 0) {
@@ -34,11 +34,11 @@ void Simulator::expand(
         ++props_.width_;
     } else {
         if (y < 0) {
-            expand_height_up(table, visited);
-            ++y;
-        } else {
             expand_height_down(table, visited);
             ++shift_y;
+            ++y;
+        } else {
+            expand_height_up(table, visited);
         }
 
         ++props_.height_;
@@ -47,7 +47,7 @@ void Simulator::expand(
 
 void Simulator::expand_width_left(
     std::deque<std::deque<uint64_t>>& table,
-    std::deque<std::deque<bool>>& visited
+    std::deque<std::deque<uint64_t>>& visited
 ) {
     for (size_t current_row_index = 0; current_row_index < props_.height_; ++current_row_index) {
         table[current_row_index].push_front(0);
@@ -57,7 +57,7 @@ void Simulator::expand_width_left(
 
 void Simulator::expand_width_right(
     std::deque<std::deque<uint64_t>>& table,
-    std::deque<std::deque<bool>>& visited
+    std::deque<std::deque<uint64_t>>& visited
 ) {
     for (size_t current_row_index = 0; current_row_index < props_.height_; ++current_row_index) {
         table[current_row_index].push_back(0);
@@ -67,18 +67,18 @@ void Simulator::expand_width_right(
 
 void Simulator::expand_height_up(
     std::deque<std::deque<uint64_t>>& table,
-    std::deque<std::deque<bool>>& visited
+    std::deque<std::deque<uint64_t>>& visited
 ) {
     table.push_back(std::deque<uint64_t>(props_.width_));
-    visited.push_back(std::deque<bool>(props_.width_));
+    visited.push_back(std::deque<uint64_t>(props_.width_));
 }
 
 void Simulator::expand_height_down(
     std::deque<std::deque<uint64_t>>& table,
-    std::deque<std::deque<bool>>& visited
+    std::deque<std::deque<uint64_t>>& visited
 ) {
     table.push_front(std::deque<uint64_t>(props_.width_));
-    visited.push_front(std::deque<bool>(props_.width_));
+    visited.push_front(std::deque<uint64_t>(props_.width_));
 }
 
 bool Simulator::check_borders(int32_t x, int32_t y) const {
@@ -88,6 +88,8 @@ bool Simulator::check_borders(int32_t x, int32_t y) const {
 void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint64_t frame_number) const {
     assert(props_.height_ == table.size() && table.size() > 0);
     assert(props_.width_ == table[0].size());
+
+    std::cout << "Rendering " << frame_number + 1 << " frame..." << std::endl;
 
     Renderer renderer(props_.width_, props_.height_);
 
@@ -126,7 +128,7 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
     };
 
     std::deque<std::deque<uint64_t>> table(props_.height_, std::deque<uint64_t>(props_.width_));
-    std::vector<std::queue<std::pair<uint16_t, uint16_t>>> bad_cells(2);
+    std::vector<std::queue<std::pair<int32_t, int32_t>>> bad_cells(2);
 
     for (CellData& cell: input_data_) {
         if (!check_borders(cell.x, cell.y)) {
@@ -140,7 +142,7 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
         }
     }
 
-    std::deque<std::deque<bool>> visited(props_.height_, std::deque<bool>(props_.width_));
+    std::deque<std::deque<uint64_t>> visited(props_.height_, std::deque<uint64_t>(props_.width_));
     uint64_t last_rendered_frame = 0;
 
     for (uint64_t iteration = 0;; ++iteration) {
@@ -153,11 +155,11 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
             break;
         }
 
-        std::cout << "Rendering " << iteration + 1 << " frame..." << std::endl;
+        std::cout << "Simulating " << iteration + 1 << " iteration..." << std::endl;
 
         uint8_t queue_index = iteration % 2;
         uint8_t other_queue_index = queue_index ^ 1;
-        std::queue<std::pair<uint16_t, uint16_t>>& current_queue = bad_cells[queue_index];
+        std::queue<std::pair<int32_t, int32_t>>& current_queue = bad_cells[queue_index];
 
         if (current_queue.empty()) {
             if (iteration != last_rendered_frame) {
@@ -172,6 +174,8 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
 
         while (!current_queue.empty()) {
             auto [x, y] = current_queue.front();
+            uint16_t old_shift_x = shift_x;
+            uint16_t old_shift_y = shift_y;
 
             x += shift_x;
             y += shift_y;
@@ -188,8 +192,8 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
             table[y][x] %= 4;
 
             for (auto [dx, dy]: ways_to_move) {
-                int32_t new_x = x + dx;
-                int32_t new_y = y + dy;
+                int32_t new_x = x - old_shift_x + shift_x + dx;
+                int32_t new_y = y - old_shift_y + shift_y + dy;
 
                 if (!check_borders(new_x, new_y)) {
                     expand(new_x, new_y, table, visited);
@@ -198,7 +202,7 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
                 table[new_y][new_x] += add_to_neighbours;
 
                 if (table[new_y][new_x] >= 4) {
-                    bad_cells[other_queue_index].push({new_x, new_y});
+                    bad_cells[other_queue_index].push({new_x - shift_x, new_y - shift_y});
                 }
             }
         }
