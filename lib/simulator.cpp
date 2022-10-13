@@ -89,7 +89,7 @@ void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint6
     assert(props_.height_ == table.size() && table.size() > 0);
     assert(props_.width_ == table[0].size());
 
-    std::cout << "Rendering " << frame_number + 1 << " frame..." << std::endl;
+    std::cout << "Rendering " << frame_number << " frame..." << std::endl;
 
     Renderer renderer(props_.width_, props_.height_);
 
