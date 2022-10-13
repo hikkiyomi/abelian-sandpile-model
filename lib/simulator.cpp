@@ -102,7 +102,7 @@ void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint6
             } else if (table[y][x] == 2) {
                 renderer.SetColor(x, y, kPurpleColor);
             } else if (table[y][x] == 3) {
-                renderer.SetColor(x, y, kPurpleColor);
+                renderer.SetColor(x, y, kYellowColor);
             } else if (table[y][x] >= 4) {
                 renderer.SetColor(x, y, kBlackColor);
             }
