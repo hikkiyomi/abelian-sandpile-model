@@ -17,8 +17,8 @@ CellData::CellData(uint16_t _x, uint16_t _y, uint64_t _grains)
 InputProperties::InputProperties() {}
 
 void Simulator::expand(
-    uint16_t x,
-    uint16_t y,
+    int32_t& x,
+    int32_t& y,
     std::deque<std::deque<uint64_t>>& table,
     std::deque<std::deque<bool>>& visited
 ) {
@@ -26,6 +26,7 @@ void Simulator::expand(
         if (x < 0) {
             expand_width_left(table, visited);
             ++shift_x;
+            ++x;
         } else {
             expand_width_right(table, visited);
         }
@@ -34,6 +35,7 @@ void Simulator::expand(
     } else {
         if (y < 0) {
             expand_height_up(table, visited);
+            ++y;
         } else {
             expand_height_down(table, visited);
             ++shift_y;
@@ -79,7 +81,7 @@ void Simulator::expand_height_down(
     visited.push_front(std::deque<bool>(props_.width_));
 }
 
-bool Simulator::check_borders(uint16_t x, uint16_t y) const {
+bool Simulator::check_borders(int32_t x, int32_t y) const {
     return 0 <= y && y < props_.height_ && 0 <= x && x < props_.width_;
 }
 
@@ -116,7 +118,7 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
     , shift_x(0)
     , shift_y(0)
 {
-    std::vector<std::pair<uint16_t, uint16_t>> ways_to_move = {
+    std::vector<std::pair<int16_t, int16_t>> ways_to_move = {
         {-1, 0},
         {1, 0},
         {0, -1},
@@ -186,8 +188,8 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
             table[y][x] %= 4;
 
             for (auto [dx, dy]: ways_to_move) {
-                uint16_t new_x = x + dx;
-                uint16_t new_y = y + dy;
+                int32_t new_x = x + dx;
+                int32_t new_y = y + dy;
 
                 if (!check_borders(new_x, new_y)) {
                     expand(new_x, new_y, table, visited);

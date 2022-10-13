@@ -37,9 +37,9 @@ private:
     uint16_t shift_x;
     uint16_t shift_y;
 
-    bool check_borders(uint16_t x, uint16_t y) const;
+    bool check_borders(int32_t x, int32_t y) const;
     
-    void expand(uint16_t x, uint16_t y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
+    void expand(int32_t& x, int32_t& y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
     void expand_width_left(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
     void expand_width_right(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
     void expand_height_up(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<bool>>& visited);
