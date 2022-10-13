@@ -1,18 +1,11 @@
 #include "interactor.h"
+#include "simulator.h"
 
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
-
-CellData::CellData() {}
-
-CellData::CellData(uint16_t _x, uint16_t _y, uint64_t _grains)
-    : x(_x)
-    , y(_y)
-    , grains(_grains)
-{}
 
 std::vector<std::string> ParseMonoOption(char* arg) {
     std::vector<std::string> result;
@@ -64,7 +57,7 @@ uint64_t ToUInt64(const std::string& arg) {
 void Interactor::ParseConsoleArguments(int argc, char* argv[]) {
     uint16_t arguments_bitmask = 0;
 
-    for (size_t i = 1; i < argc;) {
+    for (int i = 1; i < argc;) {
         if (argv[i][0] == '-') {
             std::vector<std::string> params;
             
@@ -77,21 +70,21 @@ void Interactor::ParseConsoleArguments(int argc, char* argv[]) {
             }
 
             if (params[0] == "-l" || params[0] == "--length") {
-                height_ = ToUInt16(params[1]);
+                props_.height_ = ToUInt16(params[1]);
                 arguments_bitmask |= (1 << 0);
             } else if (params[0] == "-w" || params[0] == "--width") {
-                width_ = ToUInt16(params[1]);
+                props_.width_ = ToUInt16(params[1]);
                 arguments_bitmask |= (1 << 1);
             } else if (params[0] == "-i" || params[0] == "--input") {
-                input_path_ = params[1];
+                props_.input_path_ = params[1];
                 arguments_bitmask |= (1 << 2);
             } else if (params[0] == "-o" || params[0] == "--output") {
-                output_path_ = params[1];
+                props_.output_path_ = params[1];
                 arguments_bitmask |= (1 << 3);
             } else if (params[0] == "-m" || params[0] == "--max-iter") {
-                max_iterations_ = ToUInt64(params[1]);
+                props_.max_iterations_ = ToUInt64(params[1]);
             } else if (params[0] == "-f" || params[0] == "--freq") {
-                render_frequency_ = ToUInt64(params[1]);
+                props_.render_frequency_ = ToUInt64(params[1]);
                 arguments_bitmask |= (1 << 4);
             } else {
                 std::runtime_error("Unknown argument " + std::string(params[0]) + ".");
@@ -107,7 +100,7 @@ void Interactor::ParseConsoleArguments(int argc, char* argv[]) {
 }
 
 void Interactor::ReadInputData() {
-    std::ifstream stream(input_path_);
+    std::ifstream stream(props_.input_path_);
     
     if (stream.is_open()) {
         uint16_t input_x;
@@ -129,9 +122,11 @@ void Interactor::PrintInputData() {
 }
 
 Interactor::Interactor(int argc, char* argv[]) 
-    : max_iterations_(0)
-    , render_frequency_(0)
+    : props_()
 {
+    props_.max_iterations_ = 0;
+    props_.render_frequency_ = 0;
+
     std::cout << "Parsing arguments..." << std::endl;
     ParseConsoleArguments(argc, argv);
     std::cout << "Done parsing..." << std::endl;
@@ -139,4 +134,8 @@ Interactor::Interactor(int argc, char* argv[])
     std::cout << "Reading input data..." << std::endl;
     ReadInputData();
     std::cout << "Done reading..." << std::endl;
+
+    std::cout << "Starting simulation and rendering..." << std::endl;
+    Simulator(props_, input_data_);
+    std::cout << "Rendering done." << std::endl;
 }
