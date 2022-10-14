@@ -2,6 +2,7 @@
 #include "simulator.h"
 
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <utility>
 #include <queue>
@@ -89,7 +90,9 @@ void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint6
     assert(props_.height == table.size() && table.size() > 0);
     assert(props_.width == table[0].size());
 
-    std::cout << "Rendering " << frame_number << " frame..." << std::endl;
+    auto time_before = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Rendering " << frame_number << " frame..." << std::flush;
 
     Renderer renderer(props_.width, props_.height);
 
@@ -112,6 +115,10 @@ void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint6
     std::string output_path = props_.output_path + "frame" + std::to_string(frame_number) + ".bmp";
 
     renderer.Export(output_path.c_str());
+
+    auto time_after = std::chrono::high_resolution_clock::now();
+
+    std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(time_after - time_before).count() << " ms" << std::endl;
 }
 
 Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>& _input_data)
@@ -155,7 +162,9 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
             break;
         }
 
-        std::cout << "Simulating " << iteration + 1 << " iteration..." << std::endl;
+        auto time_before = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Simulating " << iteration + 1 << " iteration... " << std::flush;
 
         uint8_t queue_index = iteration % 2;
         uint8_t other_queue_index = queue_index ^ 1;
@@ -206,6 +215,10 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
                 }
             }
         }
+
+        auto time_after = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(time_after - time_before).count() << " ms" << std::endl;
 
         if ((props_.render_frequency != 0 && iteration % props_.render_frequency == 0)
          || (props_.render_frequency == 0 && iteration == props_.max_iterations - 1)) {

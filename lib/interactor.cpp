@@ -1,6 +1,7 @@
 #include "interactor.h"
 #include "simulator.h"
 
+#include <chrono>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -135,7 +136,13 @@ Interactor::Interactor(int argc, char* argv[])
     ReadInputData();
     std::cout << "Done reading..." << std::endl;
 
+    auto time_before = std::chrono::high_resolution_clock::now();
+
     std::cout << "Starting simulation and rendering..." << std::endl;
     Simulator(props_, input_data_);
     std::cout << "Rendering done." << std::endl;
+
+    auto time_after = std::chrono::high_resolution_clock::now();
+
+    std::cout << std::endl << "Total time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(time_after - time_before).count() << " ms" << std::endl;
 }
