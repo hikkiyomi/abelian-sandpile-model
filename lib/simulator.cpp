@@ -92,7 +92,7 @@ void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint6
 
     auto time_before = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Rendering " << frame_number << " frame..." << std::flush;
+    std::cout << "Rendering " << frame_number << " frame... " << std::flush;
 
     Renderer renderer(props_.width, props_.height);
 
