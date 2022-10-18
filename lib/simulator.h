@@ -30,6 +30,8 @@ struct InputProperties {
 class Simulator {
 public:
     Simulator(const InputProperties& _props, const std::vector<CellData>& _input_data);
+
+    void Run();
 private:
     InputProperties props_;
     std::vector<CellData> input_data_;
@@ -38,6 +40,7 @@ private:
     uint16_t shift_y;
 
     bool CheckBorders(int32_t x, int32_t y) const;
+    bool CheckIfRenderNeeded(uint64_t iteration) const;
     
     void Expand(int32_t& x, int32_t& y, std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);
     void ExpandWidthLeft(std::deque<std::deque<uint64_t>>& table, std::deque<std::deque<uint64_t>>& visited);

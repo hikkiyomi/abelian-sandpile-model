@@ -5,6 +5,7 @@
 
 int main(int argc, char* argv[]) {
     Interactor interactor(argc, argv);
+    interactor.Run();
 
     return 0;
 }

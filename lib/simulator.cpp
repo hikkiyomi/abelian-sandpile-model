@@ -121,12 +121,12 @@ void Simulator::RenderFrame(const std::deque<std::deque<uint64_t>>& table, uint6
     std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(time_after - time_before).count() << " ms" << std::endl;
 }
 
-Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>& _input_data)
-    : props_(_props)
-    , input_data_(_input_data)
-    , shift_x(0)
-    , shift_y(0)
-{
+bool Simulator::CheckIfRenderNeeded(uint64_t iteration) const {
+    return (props_.render_frequency != 0 && iteration % props_.render_frequency == 0)
+         || (props_.render_frequency == 0 && iteration == props_.max_iterations - 1);
+}
+
+void Simulator::Run() {
     std::vector<std::pair<int16_t, int16_t>> ways_to_move = {
         {-1, 0},
         {1, 0},
@@ -220,10 +220,16 @@ Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>&
 
         std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(time_after - time_before).count() << " ms" << std::endl;
 
-        if ((props_.render_frequency != 0 && iteration % props_.render_frequency == 0)
-         || (props_.render_frequency == 0 && iteration == props_.max_iterations - 1)) {
+        if (CheckIfRenderNeeded(iteration)) {
             RenderFrame(table, iteration + 1);
             last_rendered_frame = iteration;
         }
     }
 }
+
+Simulator::Simulator(const InputProperties& _props, const std::vector<CellData>& _input_data)
+    : props_(_props)
+    , input_data_(_input_data)
+    , shift_x(0)
+    , shift_y(0)
+{}

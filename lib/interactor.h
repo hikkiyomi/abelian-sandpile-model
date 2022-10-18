@@ -11,6 +11,7 @@ public:
     Interactor(int argc, char* argv[]);
 
     void PrintInputData();
+    void Run();
 private:
     InputProperties props_;
     std::vector<CellData> input_data_;

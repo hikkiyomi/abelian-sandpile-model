@@ -33,10 +33,10 @@ Color::Color()
     , b(0)
 {}
 
-Color::Color(uint8_t _r, uint8_t _g, uint8_t _b)
-    : r(_r)
-    , g(_g)
-    , b(_b)
+Color::Color(uint8_t r, uint8_t g, uint8_t b)
+    : r(r)
+    , g(g)
+    , b(b)
 {}
 
 Renderer::Renderer(int32_t _width, int32_t _height) {
@@ -75,24 +75,24 @@ void Renderer::SetColor(uint16_t x, uint16_t y, const Color& color_mask) {
 void Renderer::Export(const char* file_path) const {
     std::ofstream stream(file_path, std::ios::binary);
 
-    if (stream.is_open()) {
-        WriteHeaders(stream);
-
-        uint32_t padding_length = GetPadding();
-
-        if (padding_length == 0) {
-            stream.write(reinterpret_cast<const char*>(table_.data()), table_.size());
-        } else {
-            std::vector<uint8_t> padding(padding_length);
-
-            for (int32_t y = 0; y < info_header_.height; ++y) {
-                stream.write(reinterpret_cast<const char*>(table_.data() + row_length_ * y), row_length_);
-                stream.write(reinterpret_cast<const char*>(padding.data()), padding_length);
-            }
-        }
-    } else {
+    if (!stream.is_open()) {
         throw std::runtime_error("Could not open or create the output file.");
-    } 
+    }
+
+    WriteHeaders(stream);
+
+    uint32_t padding_length = GetPadding();
+
+    if (padding_length == 0) {
+        stream.write(reinterpret_cast<const char*>(table_.data()), table_.size());
+    } else {
+        std::vector<uint8_t> padding(padding_length);
+
+        for (int32_t y = 0; y < info_header_.height; ++y) {
+            stream.write(reinterpret_cast<const char*>(table_.data() + row_length_ * y), row_length_);
+            stream.write(reinterpret_cast<const char*>(padding.data()), padding_length);
+        }
+    }
 }
 
 void Renderer::WriteHeaders(std::ofstream& stream) const {
